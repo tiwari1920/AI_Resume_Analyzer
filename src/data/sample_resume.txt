@@ -1,0 +1,8 @@
+Name: Satyam Tiwari
+Email: iamsatyampandit@gmail.com
+Phone: 9151587465
+Skills: 
+Python
+git
+GitHub
+VS Code

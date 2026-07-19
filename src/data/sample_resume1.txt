@@ -1,0 +1,9 @@
+Name: Tanishka
+Email: tanishka@gmail.com
+Phone: 943645353675
+Skills: 
+Python
+git
+GitHub
+VS Code
+Word
