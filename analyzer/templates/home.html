@@ -16,19 +16,37 @@ content="width=device-width,initial-scale=1.0">
         <p class="text-center">
             Upload your resume and recieve an AI-powered analysis , experience, and recommendations for improvement.
         </p>
-        <form>
+        {% if message %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="mb-3">
-                <label for="resume" class="form-label">
+                <label class="form-label">
                     Upload your resume (PDF or DOCX):
                 </label>
-                <input type="file" class="form-control">
+                <input type="file" name="resume" class="form-control" accept=".pdf,.doc,.docx" required>
             </div>
-            <div class="text-center"></div>
-                <button class="btn btn-primary">
-            Analyze Resume
+            <div class="text-center">
+                <button class="btn btn-primary" type="submit">
+                    Analyze Resume
                 </button>
             </div>
         </form>
+        {% if message %}
+        <div class="alert alert-success mt-4">
+            {{message}}
+        </div>
+        {% endif %}
+        {% if resume_text %}
+            <div class="card mt-4 p-4">
+                <h3>Extracted Resume Text:</h3>
+                <hr>
+                <pre>{{ resume_text }}</pre>
+            </div>
+        {% endif %}
     </div>
 </div>
 </body>
