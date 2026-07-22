@@ -1,4 +1,6 @@
+from pydoc import text
 import re
+from django.utils import text
 import fitz 
 from docx import Document
 def extract_text_from_pdf(file_path):
@@ -26,7 +28,7 @@ def extract_resume_information(text):
         "name": "",
         "email": "",
         "phone": "",
-        "skills": [],
+        "skills": {},
         "experience": [],
         "education": []
     }
@@ -38,25 +40,68 @@ def extract_resume_information(text):
     phone_match = re.search(r'\+?\d[\d -]{8,12}\d', text)
     if phone_match:
         information["phone"] = phone_match.group()
-    return information
     # Extract name
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     if lines:
         information["name"] = lines[0]
-    # Common skills
-    skill_list = ["Python", "Java", "C++", "JavaScript", "SQL", "HTML", "CSS", "Django", "Flask", "React"]
-    # find skills in resume
-    for skill in skill_list:
-        if skill.lower() in text.lower():
-            information["skills"].append(skill)
+   # Extract skills
+    skill_categories = {
+        "Programming Languages": [
+            "Python",
+            "Java",
+            "C",
+            "C++",
+            "JavaScript"
+        ],
+
+        "Web Technologies": [
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+
+        "Frameworks": [
+            "Django",
+            "Flask",
+            "React"
+        ],
+
+        "Databases": [
+            "SQL",
+            "MySQL",
+            "PostgreSQL",
+            "MongoDB"
+        ],
+
+        "Tools": [
+            "Git",
+            "GitHub",
+            "VS Code"
+        ]}
+
+    # Convert resume text to lowercase
+    resume_text_lower = text.lower()
+    # Check each category
+    for category, skills in skill_categories.items():
+        # Create an empty list for this category
+        information["skills"][category] = []
+        # Check each skill
+        for skill in skills:
+            if skill.lower() in resume_text_lower:
+                information["skills"][category].append(skill)
     # Extract education section
-    education_keywords = ["education", "degree", "university", "college", "school"]
+    education_keywords = ["education", "academic background", "qualifications", "degrees"]
     # Extract experience section
-    experience_keywords = ["experience", "work", "employment", "internship"]
+    experience_keywords = ["experience", "work experience", "professional experience", "employment history"]
     lines_lower = [line.lower() for line in lines]
+    # Find education section
     for index, line in enumerate(lines_lower):
-        if any(keyword in line for keyword in education_keywords):
-            information["education"] = lines[index: index + 6]
+        if any(keyword == line.strip() for keyword in education_keywords):
+            information["education"] = lines[index + 1:index + 6]
+            break
+    # find experience section
+    for index, line in enumerate(lines_lower):
         if any(keyword in line for keyword in experience_keywords):
-            information["experience"] = lines[index: index + 6]
+            information["experience"] = lines[index + 1:index + 6]
+            break
     return information
